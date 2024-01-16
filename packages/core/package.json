@@ -1,0 +1,29 @@
+{
+  "name": "@telegum/mini-apps-core",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Minimally useful custom Telegram Mini Apps implementation.",
+  "author": "Vladislav Deryabkin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/telegum/mini-apps.git",
+    "directory": "packages/core"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild"
+  }
+}
