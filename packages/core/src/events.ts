@@ -3,11 +3,26 @@ import type { OutgoingEvent, OutgoingEventWithData, OutgoingEventWithoutData } f
 import { assertNotReached } from './utils/assertNotReached'
 import { isIframe } from './utils/isIframe'
 
-export type EventsManagerOptions = {
+declare global {
+  interface Window {
+    TelegramWebviewProxy?: {
+      postEvent: (type: string, data?: string) => void
+    }
+    TelegramGameProxy_receiveEvent?: (...args: any[]) => void
+    TelegramGameProxy?: {
+      receiveEvent: (...args: any[]) => void
+    }
+  }
+  interface External {
+    notify: (data: string) => void
+  }
+}
+
+export type EventManagerOptions = {
   trustedTargetOrigin?: string
 }
 
-export class EventsManager {
+export class EventManager {
   private trustedTargetOrigin: string
   private communicationMethod: CommunicationMethod
   private eventListeners: Map<IncomingEvent['type'], ((data: any) => void)[]>
@@ -15,7 +30,7 @@ export class EventsManager {
 
   constructor({
     trustedTargetOrigin = '*',
-  }: EventsManagerOptions) {
+  }: EventManagerOptions) {
     this.trustedTargetOrigin = trustedTargetOrigin
     this.communicationMethod = detectCommunicationMethod()
     this.eventListeners = new Map()
@@ -167,19 +182,4 @@ function detectCommunicationMethod(): CommunicationMethod {
     return 'window.parent.postMessage'
   }
   throw new Error('Failed to detect Mini App communication method')
-}
-
-declare global {
-  interface Window {
-    TelegramWebviewProxy?: {
-      postEvent: (type: string, data?: string) => void
-    }
-    TelegramGameProxy_receiveEvent?: (...args: any[]) => void
-    TelegramGameProxy?: {
-      receiveEvent: (...args: any[]) => void
-    }
-  }
-  interface External {
-    notify: (data: string) => void
-  }
 }
