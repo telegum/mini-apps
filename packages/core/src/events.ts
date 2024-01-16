@@ -5,18 +5,25 @@ import { isIframe } from './utils/isIframe'
 
 declare global {
   interface Window {
+    Telegram?: {
+      WebView?: {
+        receiveEvent: ReceiveEventFn
+      }
+    }
     TelegramWebviewProxy?: {
       postEvent: (type: string, data?: string) => void
     }
-    TelegramGameProxy_receiveEvent?: (...args: any[]) => void
+    TelegramGameProxy_receiveEvent?: ReceiveEventFn
     TelegramGameProxy?: {
-      receiveEvent: (...args: any[]) => void
+      receiveEvent: ReceiveEventFn
     }
   }
   interface External {
     notify: (data: string) => void
   }
 }
+
+type ReceiveEventFn = (eventType: string, eventData: unknown) => void
 
 export type EventManagerOptions = {
   trustedTargetOrigin?: string
@@ -39,9 +46,14 @@ export class EventManager {
       this.setupInsideIframe()
     }
 
-    // For backward compatibility.
-    window.TelegramGameProxy_receiveEvent = this.receiveEvent.bind(this)
-    window.TelegramGameProxy = { receiveEvent: this.receiveEvent.bind(this) }
+    if (!window.Telegram) {
+      window.Telegram = {}
+    }
+
+    // Different clients invoke different methods on incoming events.
+    window.Telegram.WebView = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
+    window.TelegramGameProxy_receiveEvent = this.receiveEvent.bind(this) as ReceiveEventFn
+    window.TelegramGameProxy = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
   }
 
   private setupInsideIframe() {
