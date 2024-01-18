@@ -1,5 +1,8 @@
-import { assertNotReached, isIframe } from '@telegum/mini-apps-utils'
+import type { Json } from '@telegum/mini-apps-utils'
+import { assertNotReached, isIframe, randomString } from '@telegum/mini-apps-utils'
+import { CustomMethodFailedError } from './errors'
 import type {
+  CustomMethodInvoked,
   IncomingEvent,
   OutgoingEvent,
   OutgoingEventWithData,
@@ -36,6 +39,7 @@ export class EventManager {
   private trustedTargetOrigin: string
   private communicationMethod: CommunicationMethod
   private eventListeners: Map<IncomingEvent['type'], ((data: any) => void)[]>
+  private pendingCustomMethodRequests: Map<string, (data: Omit<CustomMethodInvoked['data'], 'req_id'>) => void>
   private iframeStyleEl?: HTMLStyleElement
 
   constructor({
@@ -44,6 +48,7 @@ export class EventManager {
     this.trustedTargetOrigin = trustedTargetOrigin
     this.communicationMethod = detectCommunicationMethod()
     this.eventListeners = new Map()
+    this.pendingCustomMethodRequests = new Map()
 
     if (isIframe()) {
       this.setupInsideIframe()
@@ -145,6 +150,10 @@ export class EventManager {
     eventType: T,
     eventData: Extract<IncomingEvent, { type: T }>['data'],
   ): void {
+    if (eventType === 'custom_method_invoked') {
+      this.onCustomMethodInvoked(eventData as Extract<IncomingEvent, { type: 'custom_method_invoked' }>['data'])
+    }
+
     const targetEventListeners = this.eventListeners.get(eventType)
     if (targetEventListeners) {
       for (const listener of targetEventListeners) {
@@ -174,6 +183,57 @@ export class EventManager {
     }
 
     return unsubscribeFn
+  }
+
+  invokeCustomMethod<T = unknown>(
+    method: string,
+    params: Json,
+  ): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const requestId = this.newCustomMethodRequestId()
+      this.pendingCustomMethodRequests.set(
+        requestId,
+        ({ result, error }) => {
+          if (error !== undefined) {
+            reject(new CustomMethodFailedError(error))
+          } else {
+            resolve(result as T)
+          }
+        },
+      )
+      this.postEvent(
+        'web_app_invoke_custom_method',
+        {
+          req_id: requestId,
+          method,
+          params,
+        },
+      )
+    })
+  }
+
+  private onCustomMethodInvoked({
+    req_id,
+    result,
+    error,
+  }: CustomMethodInvoked['data']) {
+    const pendingRequest = this.pendingCustomMethodRequests.get(req_id)
+    if (pendingRequest) {
+      pendingRequest({ result, error })
+    }
+  }
+
+  private newCustomMethodRequestId(): string {
+    for (let i = 0; i < 100; i++) {
+      const id = randomString(
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+        16,
+      )
+      if (!this.pendingCustomMethodRequests.has(id)) {
+        return id
+      }
+    }
+    throw new Error('Failed to generate a new request ID')
   }
 }
 
