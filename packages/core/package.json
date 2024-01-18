@@ -1,6 +1,6 @@
 {
   "name": "@telegum/mini-apps-core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Minimally useful custom Telegram Mini Apps implementation.",
   "author": "Vladislav Deryabkin",
   "license": "MIT",
