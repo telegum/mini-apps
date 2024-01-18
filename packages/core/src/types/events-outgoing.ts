@@ -260,10 +260,6 @@ export type WebAppSetupMainButton = {
   data: {
     is_visible?: boolean
     is_active?: boolean
-    /**
-     * @todo Make sure text is optional and what behavior will be seen in different
-     *       clients.
-     */
     text?: string
     color?: string
     text_color?: string
