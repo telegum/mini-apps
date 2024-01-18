@@ -1,20 +1,4 @@
 /**
- * https://corefork.telegram.org/bots/webapps#webappinitdata
- */
-export type InitData = {
-  hash: string
-  auth_date: number
-  query_id?: string
-  user?: Omit<User, 'is_bot'>
-  receiver?: Omit<User, 'language_code'>
-  chat?: Chat
-  chat_type?: 'sender' | 'private' | 'group' | 'supergroup' | 'channel'
-  chat_instance?: string
-  start_param?: string
-  can_send_after?: number
-}
-
-/**
  * https://corefork.telegram.org/api/bots/webapps#theme-parameters
  */
 export type ThemeParams = {
@@ -31,6 +15,22 @@ export type ThemeParams = {
   section_header_text_color: string
   subtitle_text_color: string
   destructive_text_color: string
+}
+
+/**
+ * https://corefork.telegram.org/bots/webapps#webappinitdata
+ */
+export type InitData = {
+  hash: string
+  auth_date: number
+  query_id?: string
+  user?: Omit<User, 'is_bot'>
+  receiver?: Omit<User, 'language_code'>
+  chat?: Chat
+  chat_type?: 'sender' | 'private' | 'group' | 'supergroup' | 'channel'
+  chat_instance?: string
+  start_param?: string
+  can_send_after?: number
 }
 
 /**
