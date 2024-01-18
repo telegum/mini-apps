@@ -1,5 +1,4 @@
-import type { InitData } from './types/common'
-import type { InitParams, RawInitParams } from './types/init-params'
+import type { InitData, InitParams, RawInitParams } from './types'
 
 export function loadInitParams(): InitParams {
   return parseRawInitParams(loadRawInitParams())

@@ -1,7 +1,10 @@
-import type { IncomingEvent } from './types/events-incoming'
-import type { OutgoingEvent, OutgoingEventWithData, OutgoingEventWithoutData } from './types/events-outgoing'
-import { assertNotReached } from './utils/assertNotReached'
-import { isIframe } from './utils/isIframe'
+import { assertNotReached, isIframe } from '@telegum/mini-apps-utils'
+import type {
+  IncomingEvent,
+  OutgoingEvent,
+  OutgoingEventWithData,
+  OutgoingEventWithoutData,
+} from './types'
 
 declare global {
   interface Window {

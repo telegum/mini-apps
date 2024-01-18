@@ -1,5 +1,5 @@
+import type { Empty } from '@telegum/mini-apps-utils'
 import type { ThemeParams } from './common'
-import type { Empty } from './utils'
 
 export type IncomingEvent =
   | MainButtonPressed

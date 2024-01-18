@@ -1,13 +1,13 @@
 {
-  "name": "@telegum/mini-apps-core",
+  "name": "@telegum/mini-apps-utils",
   "version": "0.1.1",
-  "description": "Minimally useful custom Telegram Mini Apps implementation.",
+  "description": "Internal utility functions and types for Telegram Mini Apps SDK.",
   "author": "Vladislav Deryabkin",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/telegum/mini-apps.git",
-    "directory": "packages/core"
+    "directory": "packages/utils"
   },
   "exports": {
     ".": {
@@ -29,8 +29,5 @@
   ],
   "scripts": {
     "build": "unbuild"
-  },
-  "dependencies": {
-    "@telegum/mini-apps-utils": "workspace:*"
   }
 }
