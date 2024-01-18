@@ -155,31 +155,25 @@ export class EventManager {
     }
   }
 
-  addEventListener<T extends IncomingEvent['type']>(
+  onEvent<T extends IncomingEvent['type']>(
     eventType: T,
     listener: (data: Extract<IncomingEvent, { type: T }>['data']) => void,
-  ): void {
-    let targetEventListeners = this.eventListeners.get(eventType)
-    if (!targetEventListeners) {
-      targetEventListeners = []
-    }
-    if (!targetEventListeners.includes(listener)) {
-      targetEventListeners.push(listener)
-    }
-    this.eventListeners.set(eventType, targetEventListeners)
-  }
+  ): () => void {
+    const listeners = this.eventListeners.get(eventType) ?? []
+    listeners.push(listener)
+    this.eventListeners.set(eventType, listeners)
 
-  removeEventListener<T extends IncomingEvent['type']>(
-    eventType: T,
-    listener: (data: Extract<IncomingEvent, { type: T }>['data']) => void,
-  ): void {
-    const targetEventListeners = this.eventListeners.get(eventType)
-    if (targetEventListeners) {
-      const index = targetEventListeners.indexOf(listener)
-      if (index !== -1) {
-        targetEventListeners.splice(index, 1)
+    const unsubscribeFn = () => {
+      const listeners = this.eventListeners.get(eventType)
+      if (listeners) {
+        const index = listeners.indexOf(listener)
+        if (index !== -1) {
+          listeners.splice(index, 1)
+        }
       }
     }
+
+    return unsubscribeFn
   }
 }
 
