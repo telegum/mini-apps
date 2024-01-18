@@ -1,3 +1,5 @@
+import type { Json } from '@telegum/mini-apps-utils'
+
 export type OutgoingEvent =
   | WebAppClose
   | WebAppOpenPopup
@@ -86,7 +88,7 @@ export type WebAppInvokeCustomMethod = {
   data: {
     req_id: string
     method: string
-    params: Record<string, unknown>
+    params: Json
   }
 }
 

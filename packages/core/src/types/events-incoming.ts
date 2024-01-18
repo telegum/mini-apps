@@ -1,4 +1,4 @@
-import type { Empty } from '@telegum/mini-apps-utils'
+import type { Empty, Json } from '@telegum/mini-apps-utils'
 import type { ThemeParams } from './common'
 
 export type IncomingEvent =
@@ -109,14 +109,9 @@ export type PhoneRequested = {
 export type CustomMethodInvoked = {
   type: 'custom_method_invoked'
 
-  /**
-   * @todo Make sure types are correct.
-   */
-  data: {
-    req_id: string
-    result: string
-    error?: string
-  }
+  data:
+    | { req_id: string, result: Json, error: undefined }
+    | { req_id: string, result: undefined, error: string }
 }
 
 /**
