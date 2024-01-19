@@ -1,16 +1,16 @@
-import type { InitData, InitParams, RawInitParams } from './types'
+import type { InitData, LaunchParams, RawLaunchParams } from './types'
 
-export function loadInitParams(): InitParams {
-  return parseRawInitParams(loadRawInitParams())
+export function loadLaunchParams(): LaunchParams {
+  return parseRawLaunchParams(loadRawLaunchParams())
 }
 
-export function loadRawInitParams(): RawInitParams {
+export function loadRawLaunchParams(): RawLaunchParams {
   const params = new URLSearchParams(location.hash.slice(1))
   return Object.fromEntries(params.entries())
 }
 
-export function parseRawInitParams(raw: RawInitParams): InitParams {
-  const parsed: InitParams = {}
+export function parseRawLaunchParams(raw: RawLaunchParams): LaunchParams {
+  const parsed: LaunchParams = {}
 
   if (raw.tgWebAppData) {
     try {
@@ -37,8 +37,16 @@ export function parseRawInitParams(raw: RawInitParams): InitParams {
     } catch (_) {}
   }
 
-  parsed.showSettings = !!raw.tgWebAppShowSettings
-  parsed.botInline = !!raw.tgWebAppBotInline
+  parsed.showSettings = (
+    !!raw.tgWebAppShowSettings
+    && raw.tgWebAppShowSettings !== '0'
+    && raw.tgWebAppShowSettings !== 'false'
+  )
+  parsed.botInline = (
+    !!raw.tgWebAppBotInline
+    && raw.tgWebAppBotInline !== '0'
+    && raw.tgWebAppBotInline !== 'false'
+  )
 
   return parsed
 }
