@@ -1,4 +1,6 @@
 export * from './browser'
+export * from './bytes'
+export * from './colors'
 export * from './control-flow'
 export * from './random'
 export * from './types'
