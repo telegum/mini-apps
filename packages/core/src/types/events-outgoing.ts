@@ -25,6 +25,8 @@ export type OutgoingEvent =
   | WebAppSetupMainButton
   | WebAppSetupBackButton
   | WebAppSetupSettingsButton
+  | IframeWillReload
+  | IframeReady
 
 export type OutgoingEventWithData = {
   [K in OutgoingEvent['type']]: Extract<OutgoingEvent, { type: K, data: any }>
@@ -287,6 +289,18 @@ export type WebAppSetupSettingsButton = {
   data: {
     is_visible: boolean
   }
+}
+
+/**
+ * https://tg.dev/js/telegram-web-app.js
+ */
+export type IframeWillReload = {
+  type: 'iframe_will_reload'
+}
+
+export type IframeReady = {
+  type: 'iframe_ready'
+  data: { reload_supported: boolean }
 }
 
 /**

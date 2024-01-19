@@ -15,6 +15,8 @@ export type IncomingEvent =
   | ClipboardTextReceived
   | QrTextReceived
   | ScanQrPopupClosed
+  | ReloadIframe
+  | SetCustomStyles
 
 /**
  * https://corefork.telegram.org/api/bots/webapps#main-button-pressed
@@ -141,4 +143,20 @@ export type QrTextReceived = {
 export type ScanQrPopupClosed = {
   type: 'scan_qr_popup_closed'
   data: null | Empty
+}
+
+/**
+ * https://tg.dev/js/telegram-web-app.js
+ */
+export type ReloadIframe = {
+  type: 'reload_iframe'
+  data: null
+}
+
+/**
+ * https://tg.dev/js/telegram-web-app.js
+ */
+export type SetCustomStyles = {
+  type: 'set_custom_style'
+  data: string
 }
