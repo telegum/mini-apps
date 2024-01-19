@@ -29,97 +29,57 @@ declare global {
   }
 }
 
-type ReceiveEventFn = (eventType: string, eventData: unknown) => void
-
 export type EventManagerOptions = {
   trustedTargetOrigin?: string
 }
 
+/**
+ * Communication channel between Mini App and hosting Telegram client.
+ *
+ * - Handle incoming events from the Telegram client using
+ *   `EventManager.onEvent` method.
+ * - Emit events to the Telegram client using `EventManager.postEvent` method.
+ *
+ * It also provides a convenient way of
+ * [invoking custom methods](https://corefork.telegram.org/api/web-events#web-app-invoke-custom-method)
+ * with the `EventManager.invokeCustomMethod` method.
+ *
+ * @see https://corefork.telegram.org/api/bots/webapps
+ * @see https://corefork.telegram.org/api/web-events
+ */
 export class EventManager {
   private trustedTargetOrigin: string
   private communicationMethod: CommunicationMethod
   private eventListeners: Map<IncomingEvent['type'], ((data: any) => void)[]>
   private pendingCustomMethodRequests: Map<string, (data: Omit<CustomMethodInvoked['data'], 'req_id'>) => void>
-  private iframeStyleEl?: HTMLStyleElement
 
-  constructor({
-    trustedTargetOrigin = '*',
-  }: EventManagerOptions) {
+  constructor(options: EventManagerOptions = {}) {
+    const {
+      trustedTargetOrigin = '*',
+    } = options
+
     this.trustedTargetOrigin = trustedTargetOrigin
     this.communicationMethod = detectCommunicationMethod()
     this.eventListeners = new Map()
     this.pendingCustomMethodRequests = new Map()
-
-    if (isIframe()) {
-      this.setupInsideIframe()
-    }
-
-    if (!window.Telegram) {
-      window.Telegram = {}
-    }
-
-    // Different clients invoke different methods on incoming events.
-    window.Telegram.WebView = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
-    window.TelegramGameProxy_receiveEvent = this.receiveEvent.bind(this) as ReceiveEventFn
-    window.TelegramGameProxy = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
+    this.registerEventReceivers()
   }
 
-  private setupInsideIframe() {
-    try {
-      window.addEventListener('message', (event) => {
-        if (event.source !== window.parent) {
-          return
-        }
-
-        let dataParsed
-        try {
-          dataParsed = JSON.parse(event.data)
-        } catch (e) {
-          return
-        }
-
-        if (!dataParsed || !dataParsed.eventType) {
-          return
-        }
-
-        if (dataParsed.eventType === 'set_custom_style') {
-          if (event.origin === 'https://web.telegram.org') {
-            if (!this.iframeStyleEl) {
-              this.iframeStyleEl = document.createElement('style')
-              document.head.appendChild(this.iframeStyleEl)
-            }
-            this.iframeStyleEl.innerHTML = dataParsed.eventData
-          }
-        } else if (dataParsed.eventType === 'reload_iframe') {
-          try {
-            this.postEventUsingMethod(
-              'iframe_will_reload',
-              null,
-              'window.parent.postMessage',
-            )
-          } catch (e) {}
-          location.reload()
-        } else {
-          this.receiveEvent(dataParsed.eventType, dataParsed.eventData)
-        }
-      })
-      this.postEventUsingMethod(
-        'iframe_ready',
-        { reload_supported: true },
-        'window.parent.postMessage',
-      )
-    } catch (e) {}
-  }
-
-  private postEventUsingMethod(
-    eventType: string,
-    eventData: unknown,
-    method: CommunicationMethod,
-  ): void {
+  /**
+   * Emits an event to the hosting Telegram client using the automatically
+   * detected communication method, which may differ between clients.
+   *
+   * @see https://corefork.telegram.org/api/web-events
+   * @param eventType Type of the event.
+   * @param eventData Event payload specific for each event type.
+   */
+  postEvent<T extends OutgoingEventWithData['type']>(eventType: T, eventData: Extract<OutgoingEventWithData, { type: T }>['data']): void
+  postEvent<T extends OutgoingEventWithoutData['type']>(eventType: T, eventData?: never): void
+  postEvent(eventType: OutgoingEvent['type'], eventData?: unknown) {
     if (eventData === undefined) {
       eventData = null
     }
-    switch (method) {
+    switch (this.communicationMethod) {
       case 'window.TelegramWebviewProxy.postEvent':
         window
           .TelegramWebviewProxy!
@@ -136,34 +96,21 @@ export class EventManager {
           .postMessage(JSON.stringify({ eventType, eventData }), this.trustedTargetOrigin)
         break
       default:
-        assertNotReached(method)
+        assertNotReached(this.communicationMethod)
     }
   }
 
-  postEvent<T extends OutgoingEventWithData['type']>(eventType: T, eventData: Extract<OutgoingEventWithData, { type: T }>['data']): void
-  postEvent<T extends OutgoingEventWithoutData['type']>(eventType: T, eventData?: never): void
-  postEvent(eventType: OutgoingEvent['type'], eventData?: unknown) {
-    this.postEventUsingMethod(eventType, eventData, this.communicationMethod)
-  }
-
-  receiveEvent<T extends IncomingEvent['type']>(
-    eventType: T,
-    eventData: Extract<IncomingEvent, { type: T }>['data'],
-  ): void {
-    if (eventType === 'custom_method_invoked') {
-      this.onCustomMethodInvoked(eventData as Extract<IncomingEvent, { type: 'custom_method_invoked' }>['data'])
-    }
-
-    const targetEventListeners = this.eventListeners.get(eventType)
-    if (targetEventListeners) {
-      for (const listener of targetEventListeners) {
-        try {
-          listener(eventData)
-        } catch (e) {}
-      }
-    }
-  }
-
+  /**
+   * Registers a listener function that will be invoked each time the Telegram
+   * client will send an event to the Mini App.
+   *
+   * @param eventType Event type to subscribe to.
+   * @param listener Function to be called when a new event of a specified type
+   *  is received from the hosting Telegram client. Event data will be passed
+   *  as a first argument.
+   * @returns Function that can be called to remove the registered event
+   *  listener.
+   */
   onEvent<T extends IncomingEvent['type']>(
     eventType: T,
     listener: (data: Extract<IncomingEvent, { type: T }>['data']) => void,
@@ -185,10 +132,19 @@ export class EventManager {
     return unsubscribeFn
   }
 
-  invokeCustomMethod<T = unknown>(
-    method: string,
-    params: Json,
-  ): Promise<T> {
+  /**
+   * Invokes a custom method call to Telegram servers via the Telegram client.
+   * It automatically registers a listener to handle custom method result and
+   * returns a Promise instead.
+   *
+   * @see https://corefork.telegram.org/api/web-events#web-app-invoke-custom-method
+   * @param method Custom method type to invoke.
+   * @param params Paramaters that should be passed to the custom method.
+   * @returns Promise that will be resolved with the result of the custom
+   *  method invocation, or rejected with a `CustomMethodFailedError` containing
+   *  message describing the error in case custom method fails.
+   */
+  invokeCustomMethod<T = unknown>(method: string, params: Json): Promise<T> {
     return new Promise((resolve, reject) => {
       const requestId = this.newCustomMethodRequestId()
       this.pendingCustomMethodRequests.set(
@@ -210,6 +166,57 @@ export class EventManager {
         },
       )
     })
+  }
+
+  private registerEventReceivers() {
+    // Different clients of different versions send events in different ways.
+
+    // (1)
+    if (isIframe()) {
+      try {
+        window.addEventListener('message', (event) => {
+          if (event.source !== window.parent) {
+            return
+          }
+          try {
+            const { eventType, eventData } = JSON.parse(event.data)
+            if (eventType) {
+              this.receiveEvent(eventType, eventData)
+            }
+          } catch (_) {}
+        })
+      } catch (_) {}
+    }
+
+    // (2)
+    if (!window.Telegram) {
+      window.Telegram = {}
+    }
+    window.Telegram.WebView = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
+
+    // (3)
+    window.TelegramGameProxy_receiveEvent = this.receiveEvent.bind(this) as ReceiveEventFn
+
+    // (4)
+    window.TelegramGameProxy = { receiveEvent: this.receiveEvent.bind(this) as ReceiveEventFn }
+  }
+
+  private receiveEvent<T extends IncomingEvent['type']>(
+    eventType: T,
+    eventData: Extract<IncomingEvent, { type: T }>['data'],
+  ): void {
+    if (eventType === 'custom_method_invoked') {
+      this.onCustomMethodInvoked(eventData as Extract<IncomingEvent, { type: 'custom_method_invoked' }>['data'])
+    }
+
+    const targetEventListeners = this.eventListeners.get(eventType)
+    if (targetEventListeners) {
+      for (const listener of targetEventListeners) {
+        try {
+          listener(eventData)
+        } catch (e) {}
+      }
+    }
   }
 
   private onCustomMethodInvoked({
@@ -236,6 +243,8 @@ export class EventManager {
     throw new Error('Failed to generate a new request ID')
   }
 }
+
+type ReceiveEventFn = (eventType: string, eventData: unknown) => void
 
 type CommunicationMethod =
   | 'window.TelegramWebviewProxy.postEvent'
