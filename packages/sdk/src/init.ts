@@ -2,6 +2,8 @@ import { EventManager } from '@telegum/mini-apps-core'
 import { isIframe } from '@telegum/mini-apps-utils'
 import type { Context } from './components/_context'
 
+import type { BackButtonFlavor } from './components/back-button'
+import { installBackButton } from './components/back-button'
 import type { BasicFunctionalityFlavor } from './components/basic-functionality'
 import { installBasicFunctionality } from './components/basic-functionality'
 import type { CloudStorageFlavor } from './components/cloud-storage'
@@ -10,6 +12,8 @@ import type { HapticFeedbackFlavor } from './components/haptic-feedback'
 import { installHapticFeedback } from './components/haptic-feedback'
 import type { MainButtonFlavor } from './components/main-button'
 import { installMainButton } from './components/main-button'
+import type { SettingsButtonFlavor } from './components/settings-button'
+import { installSettingsButton } from './components/settings-button'
 import type { ThemingFlavor } from './components/theming'
 import { installTheming } from './components/theming'
 
@@ -20,6 +24,8 @@ export type MiniApp =
   & BasicFunctionalityFlavor
   & ThemingFlavor
   & MainButtonFlavor
+  & BackButtonFlavor
+  & SettingsButtonFlavor
   & HapticFeedbackFlavor
   & CloudStorageFlavor
 
@@ -41,6 +47,8 @@ export function init(): MiniApp {
   installBasicFunctionality(ctx)
   installTheming(ctx)
   installMainButton(ctx)
+  installBackButton(ctx)
+  installSettingsButton(ctx)
   installHapticFeedback(ctx)
   installCloudStorage(ctx)
 
