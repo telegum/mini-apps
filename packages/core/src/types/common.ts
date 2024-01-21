@@ -1,7 +1,7 @@
 /**
  * https://corefork.telegram.org/api/bots/webapps#theme-parameters
  */
-export type ThemeParams = Partial<{
+export type ThemeParams = {
   bg_color: string
   secondary_bg_color: string
   text_color: string
@@ -15,4 +15,4 @@ export type ThemeParams = Partial<{
   section_header_text_color: string
   subtitle_text_color: string
   destructive_text_color: string
-}>
+}

@@ -1,3 +1,4 @@
+import type { Empty } from '@telegum/mini-apps-utils'
 import type { ThemeParams } from './common'
 
 /**
@@ -14,10 +15,10 @@ export type RawLaunchParams = Partial<{
 
 export type LaunchParams = Partial<{
   initDataRaw: string
-  initData: InitData
+  initData: Empty | InitData
   version: string
   platform: string
-  themeParams: ThemeParams
+  themeParams: Partial<ThemeParams>
   showSettings: boolean
   botInline: boolean
 }>

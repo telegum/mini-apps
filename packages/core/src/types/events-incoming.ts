@@ -71,7 +71,7 @@ export type ViewportChanged = {
 export type ThemeChanged = {
   type: 'theme_changed'
   data: {
-    data: ThemeParams
+    data: Partial<ThemeParams>
   }
 }
 
