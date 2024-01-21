@@ -36,13 +36,12 @@ export type EventManagerOptions = {
 /**
  * Communication channel between Mini App and hosting Telegram client.
  *
- * - Handle incoming events from the Telegram client using
- *   `EventManager.onEvent` method.
- * - Emit events to the Telegram client using `EventManager.postEvent` method.
- *
- * It also provides a convenient way of
- * [invoking custom methods](https://corefork.telegram.org/api/web-events#web-app-invoke-custom-method)
- * with the `EventManager.invokeCustomMethod` method.
+ * - Handle [incoming events](https://corefork.telegram.org/api/bots/webapps#incoming-events-client-to-mini-app)
+ *   from the Telegram client using `EventManager.onEvent` method.
+ * - Emit [events](https://corefork.telegram.org/api/bots/webapps#outgoing-events-mini-app-to-client)
+ *   to the Telegram client using `EventManager.postEvent` method.
+ * - Invoke [custom methods](https://corefork.telegram.org/api/web-events#web-app-invoke-custom-method)
+ *   with the `EventManager.invokeCustomMethod` method.
  *
  * @see https://corefork.telegram.org/api/bots/webapps
  * @see https://corefork.telegram.org/api/web-events
