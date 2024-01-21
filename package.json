@@ -11,7 +11,7 @@
     "lint:fix": "nr lint --fix",
     "typecheck": "tsc --noEmit",
     "taze": "taze minor -wIr",
-    "release": "bumpp -r package.json packages/*/package.json"
+    "release": "bumpp -r package.json packages/*/package.json playground/package.json"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.3",

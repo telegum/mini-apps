@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Apps | Playground</title>
+  </head>
+  <body>
+    <div id="root">
+      <section>
+        <h2>Buttons</h2>
+        <button id="toggle-main-button">Show Main Button</button>
+        <button id="toggle-back-button">Show Back Button</button>
+        <button id="toggle-settings-button">Show Settings Button</button>
+      </section>
+      <section>
+        <h2>Haptic Feedback</h2>
+        <label>
+          Select type:
+          <select id="haptic-feedback-select">
+            <option value="selection-change" selected>Selection changed</option>
+            <option value="success">Notification / Success</option>
+            <option value="warning">Notification / Warning</option>
+            <option value="error">Notification / Error</option>
+            <option value="impact-light">Impact / Light</option>
+            <option value="impact-medium">Impact / Medium</option>
+            <option value="impact-heavy">Impact / Heavy</option>
+            <option value="impact-rigid">Impact / Rigid</option>
+            <option value="impact-soft">Impact / Soft</option>
+          </select>
+        </label>
+        <button id="haptic-feedback-trigger">Trigger</button>
+      </section>
+      <section>
+        <h2>Permissions</h2>
+        <button id="request-write-access">Request write access</button>
+        <button id="request-phone">Request phone number</button>
+      </section>
+      <section>
+        <h2>Theme</h2>
+        <pre id="theme"></pre>
+      </section>
+      <section>
+        <h2>Launch Parameters</h2>
+        <pre id="launch-params"></pre>
+      </section>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -15,4 +15,14 @@ export default antfu(
       'style/brace-style': ['error', '1tbs'],
     },
   },
+  {
+    files: [
+      'playground/**/*.ts',
+      'playground/**/*.js',
+    ],
+    rules: {
+      'no-alert': ['off'],
+      'no-console': ['off'],
+    },
+  },
 )
