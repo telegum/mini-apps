@@ -1,3 +1,4 @@
+import { ClickableComponent } from '../utils/clickable-component'
 import { State } from '../utils/state'
 import type { Context } from './_context'
 import type { ThemingFlavor } from './theming'
@@ -39,15 +40,14 @@ export type MainButtonState = {
   loading: boolean
 }
 
-class MainButton {
-  private onClickCallbacks: (() => void)[]
+class MainButton extends ClickableComponent {
   private state: State<MainButtonState>
 
   constructor(private ctx: Context<ThemingFlavor>) {
-    this.onClickCallbacks = []
+    super()
     this.ctx.eventManager.onEvent('main_button_pressed', () => {
       if (this.visible && this.enabled) {
-        this.onClickCallbacks.forEach(cb => cb())
+        this.triggerOnClick()
       }
     })
 
@@ -165,19 +165,6 @@ class MainButton {
 
   stopLoading() {
     this.loading = false
-  }
-
-  onClick(callback: () => void): () => void {
-    this.onClickCallbacks.push(callback)
-
-    const unsubscribeFn = () => {
-      const index = this.onClickCallbacks.indexOf(callback)
-      if (index !== -1) {
-        this.onClickCallbacks.splice(index, 1)
-      }
-    }
-
-    return unsubscribeFn
   }
 
   updateProps(patch: Partial<MainButtonState>) {
