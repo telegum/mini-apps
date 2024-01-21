@@ -1,4 +1,5 @@
 import { EventManager } from '@telegum/mini-apps-core'
+import { isIframe } from '@telegum/mini-apps-utils'
 import type { Context } from './components/_context'
 
 import type { BasicFunctionalityFlavor } from './components/basic-functionality'
@@ -22,25 +23,6 @@ export type MiniApp =
   & HapticFeedbackFlavor
   & CloudStorageFlavor
 
-/* @todo
-
-function setupInsideIframe() {
-  this.eventManager.onEvent('set_custom_style', (customStyle) => {
-    // @todo add `if (event.origin === 'https://web.telegram.org') {`?
-    if (!this.iframeCustomStyleEl) {
-      this.iframeCustomStyleEl = document.createElement('style')
-      document.head.appendChild(this.iframeCustomStyleEl)
-    }
-    this.iframeCustomStyleEl.innerHTML = customStyle
-  })
-  this.eventManager.onEvent('reload_iframe', () => {
-    this.eventManager.postEvent('iframe_will_reload')
-    location.reload()
-  })
-  this.eventManager.postEvent('iframe_ready', { reload_supported: true })
-}
-*/
-
 export function init(): MiniApp {
   const ctx: Context<MiniApp> = {
     storage: sessionSyncKvStorage,
@@ -52,6 +34,10 @@ export function init(): MiniApp {
     miniApp: {} as MiniApp,
   }
 
+  if (isIframe()) {
+    setupInsideIframe(ctx)
+  }
+
   installBasicFunctionality(ctx)
   installTheming(ctx)
   installMainButton(ctx)
@@ -59,4 +45,22 @@ export function init(): MiniApp {
   installCloudStorage(ctx)
 
   return ctx.miniApp
+}
+
+function setupInsideIframe(ctx: Context) {
+  let iframeCustomStyleEl: HTMLStyleElement | null = null
+
+  ctx.eventManager.onEvent('set_custom_style', (customStyle) => {
+    // @todo add `if (event.origin === 'https://web.telegram.org') {`?
+    if (!iframeCustomStyleEl) {
+      iframeCustomStyleEl = document.createElement('style')
+      document.head.appendChild(iframeCustomStyleEl)
+    }
+    iframeCustomStyleEl.innerHTML = customStyle
+  })
+  ctx.eventManager.onEvent('reload_iframe', () => {
+    ctx.eventManager.postEvent('iframe_will_reload')
+    location.reload()
+  })
+  ctx.eventManager.postEvent('iframe_ready', { reload_supported: true })
 }
