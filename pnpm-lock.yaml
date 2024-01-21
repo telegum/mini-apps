@@ -51,7 +51,14 @@ importers:
         specifier: workspace:*
         version: link:../utils
 
-  packages/sdk: {}
+  packages/sdk:
+    dependencies:
+      '@telegum/mini-apps-core':
+        specifier: workspace:*
+        version: link:../core
+      '@telegum/mini-apps-utils':
+        specifier: workspace:*
+        version: link:../utils
 
   packages/utils: {}
 
