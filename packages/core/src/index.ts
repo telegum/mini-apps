@@ -1,3 +1,3 @@
 export * from './errors'
-export * from './events'
+export * from './event-manager'
 export * from './launch-params'

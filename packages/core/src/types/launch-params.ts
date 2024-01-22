@@ -1,5 +1,5 @@
 import type { Empty } from '@telegum/mini-apps-utils'
-import type { ThemeParams } from './common'
+import type { ThemeParams } from './theme-params'
 
 /**
  * https://tg.dev/js/telegram-web-app.js
