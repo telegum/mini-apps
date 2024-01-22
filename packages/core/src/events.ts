@@ -226,6 +226,7 @@ export class EventManager {
     const pendingRequest = this.pendingCustomMethodRequests.get(req_id)
     if (pendingRequest) {
       pendingRequest({ result, error })
+      this.pendingCustomMethodRequests.delete(req_id)
     }
   }
 
