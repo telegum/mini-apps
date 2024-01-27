@@ -14,6 +14,7 @@ const {
   mainButton,
   settingsButton,
   backButton,
+  popup,
   requestWriteAccess,
   requestPhone,
 } = init()
@@ -21,7 +22,7 @@ const {
 ready()
 expand()
 
-//
+// Main Button
 
 mainButton.text = 'CLOSE MINI APP'
 mainButton.onClick(() => close())
@@ -35,7 +36,7 @@ mainButtonToggle.addEventListener('click', () => {
 })
 updateMainButtonToggle()
 
-//
+// Back Button
 
 backButton.onClick(() => alert('Back button clicked.'))
 const backButtonToggle = document.getElementById('toggle-back-button') as HTMLButtonElement
@@ -48,7 +49,7 @@ backButtonToggle.addEventListener('click', () => {
 })
 updateBackButtonToggle()
 
-//
+// Settings Button
 
 settingsButton.onClick(() => alert('Settings button clicked.'))
 const settingsButtonToggle = document.getElementById('toggle-settings-button') as HTMLButtonElement
@@ -61,7 +62,41 @@ settingsButtonToggle.addEventListener('click', () => {
 })
 updateSettingsButtonToggle()
 
-//
+// Popup
+
+const showPopupConfirmButton = document.getElementById('show-popup-confirm') as HTMLButtonElement
+showPopupConfirmButton.addEventListener('click', () => {
+  popup
+    .show({
+      title: 'Short Title',
+      message: 'Some descriptive message for the popup with "ok" and "cancel" buttons.',
+      buttons: [
+        { id: 'ok', type: 'ok' },
+        { id: 'cancel', type: 'cancel' },
+      ],
+    })
+    .then(({ pressedButtonId }) => {
+      alert(`Pressed button ID: ${pressedButtonId}`)
+    })
+})
+
+const showPopupActionButton = document.getElementById('show-popup-action') as HTMLButtonElement
+showPopupActionButton.addEventListener('click', () => {
+  popup
+    .show({
+      message: 'Fake popup without title but with buttons of 3 types: "default", "destructive" and "close".',
+      buttons: [
+        { id: 'send-money', type: 'default', text: 'Send Money' },
+        { id: 'delete-all', type: 'destructive', text: 'Delete All' },
+        { id: 'close', type: 'close' },
+      ],
+    })
+    .then(({ pressedButtonId }) => {
+      alert(`Pressed button ID: ${pressedButtonId}`)
+    })
+})
+
+// Haptic Feedback
 
 const triggerHapticButton = document.getElementById('haptic-feedback-trigger') as HTMLButtonElement
 const triggerHapticSelect = document.getElementById('haptic-feedback-select') as HTMLSelectElement
@@ -70,7 +105,7 @@ triggerHapticButton.addEventListener('click', () => {
   haptic(triggerHapticSelect.options[triggerHapticSelect.selectedIndex].value as any)
 })
 
-//
+// Permissions
 
 const requestWriteAccessButton = document.getElementById('request-write-access') as HTMLButtonElement
 requestWriteAccessButton.addEventListener('click', () => {
@@ -96,7 +131,7 @@ requestPhoneButton.addEventListener('click', () => {
     })
 })
 
-//
+// Theme & Launch Params
 
 document.getElementById('launch-params')!.innerHTML = JSON.stringify(
   {
