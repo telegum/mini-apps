@@ -14,6 +14,8 @@ import type { MainButtonFlavor } from './components/main-button'
 import { installMainButton } from './components/main-button'
 import type { PermissionsFlavor } from './components/permissions'
 import { installPermissions } from './components/permissions'
+import type { PopupFlavor } from './components/popup'
+import { installPopup } from './components/popup'
 import type { SettingsButtonFlavor } from './components/settings-button'
 import { installSettingsButton } from './components/settings-button'
 import type { ThemingFlavor } from './components/theming'
@@ -28,6 +30,7 @@ export type MiniApp =
   & MainButtonFlavor
   & BackButtonFlavor
   & SettingsButtonFlavor
+  & PopupFlavor
   & HapticFeedbackFlavor
   & PermissionsFlavor
   & CloudStorageFlavor
@@ -52,6 +55,7 @@ export function init(): MiniApp {
   installMainButton(ctx)
   installBackButton(ctx)
   installSettingsButton(ctx)
+  installPopup(ctx)
   installHapticFeedback(ctx)
   installPermissions(ctx)
   installCloudStorage(ctx)
