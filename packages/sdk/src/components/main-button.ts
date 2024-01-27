@@ -4,27 +4,7 @@ import type { Context } from './_context'
 import type { ThemingFlavor } from './theming'
 
 export type MainButtonFlavor = {
-  mainButton: {
-    text: string
-    textColor: string
-    bgColor: string
-
-    visible: boolean
-    hide(): void
-    show(): void
-
-    enabled: boolean
-    enable(): void
-    disable(): void
-
-    loading: boolean
-    startLoading(): void
-    stopLoading(): void
-
-    onClick(callback: () => void): () => void
-
-    updateProps(patch: Partial<MainButtonState>): void
-  }
+  mainButton: MainButton
 }
 
 export function installMainButton(ctx: Context<MainButtonFlavor & ThemingFlavor>) {
@@ -45,6 +25,7 @@ class MainButton extends ClickableComponent {
 
   constructor(private ctx: Context<ThemingFlavor>) {
     super()
+
     this.ctx.eventManager.onEvent('main_button_pressed', () => {
       if (this.visible && this.enabled) {
         this.triggerOnClick()
@@ -63,6 +44,7 @@ class MainButton extends ClickableComponent {
         loading: false,
       }),
     })
+
     this.state.onBeforeChange = (newState) => {
       if (newState.text != null) {
         newState.text = newState.text.trim()
@@ -127,11 +109,11 @@ class MainButton extends ClickableComponent {
     this.state.set('visible', value)
   }
 
-  hide() {
+  public hide() {
     this.visible = false
   }
 
-  show() {
+  public show() {
     this.visible = true
   }
 
@@ -143,11 +125,11 @@ class MainButton extends ClickableComponent {
     this.state.set('enabled', value)
   }
 
-  enable() {
+  public enable() {
     this.enabled = true
   }
 
-  disable() {
+  public disable() {
     this.enabled = false
   }
 
@@ -159,15 +141,15 @@ class MainButton extends ClickableComponent {
     this.state.set('loading', value)
   }
 
-  startLoading() {
+  public startLoading() {
     this.loading = true
   }
 
-  stopLoading() {
+  public stopLoading() {
     this.loading = false
   }
 
-  updateProps(patch: Partial<MainButtonState>) {
+  public updateProps(patch: Partial<MainButtonState>) {
     this.state.patch(patch)
   }
 }

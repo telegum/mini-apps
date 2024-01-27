@@ -3,13 +3,7 @@ import { State } from '../utils/state'
 import type { Context } from './_context'
 
 export type BackButtonFlavor = {
-  backButton: {
-    visible: boolean
-    hide(): void
-    show(): void
-
-    onClick(callback: () => void): () => void
-  }
+  backButton: BackButton
 }
 
 export function installBackButton(ctx: Context<BackButtonFlavor>) {
@@ -53,11 +47,11 @@ class BackButton extends ClickableComponent {
     this.state.set('visible', value)
   }
 
-  hide() {
+  public hide() {
     this.visible = false
   }
 
-  show() {
+  public show() {
     this.visible = true
   }
 }

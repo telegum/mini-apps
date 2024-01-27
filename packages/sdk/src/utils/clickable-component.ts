@@ -1,9 +1,5 @@
 export class ClickableComponent {
-  private onClickCallbacks: (() => void)[]
-
-  constructor() {
-    this.onClickCallbacks = []
-  }
+  private onClickCallbacks: (() => void)[] = []
 
   public onClick(callback: () => void): () => void {
     this.onClickCallbacks.push(callback)

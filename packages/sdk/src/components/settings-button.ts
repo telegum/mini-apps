@@ -3,13 +3,7 @@ import { State } from '../utils/state'
 import type { Context } from './_context'
 
 export type SettingsButtonFlavor = {
-  settingsButton: {
-    visible: boolean
-    hide(): void
-    show(): void
-
-    onClick(callback: () => void): () => void
-  }
+  settingsButton: SettingsButton
 }
 
 export function installSettingsButton(ctx: Context<SettingsButtonFlavor>) {
@@ -53,11 +47,11 @@ class SettingsButton extends ClickableComponent {
     this.state.set('visible', value)
   }
 
-  hide() {
+  public hide() {
     this.visible = false
   }
 
-  show() {
+  public show() {
     this.visible = true
   }
 }
