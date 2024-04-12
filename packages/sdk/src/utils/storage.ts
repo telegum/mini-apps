@@ -1,9 +1,9 @@
 import type { Json } from '@telegum/mini-apps-utils'
 
 export interface SyncKvStorage {
-  save(key: string, value: Json): void
-  load<T extends Json>(key: string): T | undefined
-  delete(key: string): void
+  save: (key: string, value: Json) => void
+  load: <T extends Json>(key: string) => T | undefined
+  delete: (key: string) => void
 }
 
 export const sessionSyncKvStorage: SyncKvStorage = {

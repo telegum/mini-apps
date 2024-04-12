@@ -1,8 +1,8 @@
 import type { Context } from './_context'
 
 export type PermissionsFlavor = {
-  requestWriteAccess(): Promise<boolean>
-  requestPhone(): Promise<boolean>
+  requestWriteAccess: () => Promise<boolean>
+  requestPhone: () => Promise<boolean>
 }
 
 export function installPermissions(ctx: Context<PermissionsFlavor>) {

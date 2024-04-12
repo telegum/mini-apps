@@ -8,9 +8,9 @@ export type BasicFunctionalityFlavor = {
   initData: InitData | Empty
   initDataRaw: string
 
-  ready(): void
-  expand(): void
-  close(): void // @todo Maybe return type is `never`?
+  ready: () => void
+  expand: () => void
+  close: () => void // @todo Maybe return type is `never`?
 }
 
 export function installBasicFunctionality(ctx: Context<BasicFunctionalityFlavor>) {
