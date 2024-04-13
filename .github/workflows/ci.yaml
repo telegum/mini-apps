@@ -10,52 +10,38 @@ on:
       - main
 
 jobs:
-  lint:
+  qa:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 8
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: pnpm
 
       - name: Install ni
         run: npm i -g @antfu/ni
 
       - name: Install dependencies
+        id: deps
         run: nci
 
       - name: Lint
+        if: steps.deps.outcome == 'success'
         run: nr lint
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: pnpm
-
-      - name: Install ni
-        run: npm i -g @antfu/ni
-
-      - name: Install dependencies
-        run: nci
-
       - name: Typecheck
+        if: steps.deps.outcome == 'success'
         run: nr typecheck
+
+      - name: Test
+        if: steps.deps.outcome == 'success'
+        run: nr test
