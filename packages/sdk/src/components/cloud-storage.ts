@@ -64,7 +64,7 @@ class CloudStorage {
 }
 
 function validateKey(key: string) {
-  if (!/^[a-zA-Z0-9_-]{1,128}$/.test(key)) {
+  if (!/^[\w-]{1,128}$/.test(key)) {
     throw new Error(`Cloud Storage key "${key}" is invalid, it must be 1-128 characters long, only A-Z, a-z, 0-9, _ and - are allowed`)
   }
 }
