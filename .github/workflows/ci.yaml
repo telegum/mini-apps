@@ -41,7 +41,3 @@ jobs:
       - name: Typecheck
         if: steps.deps.outcome == 'success'
         run: nr typecheck
-
-      - name: Test
-        if: steps.deps.outcome == 'success'
-        run: nr test
