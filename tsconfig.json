@@ -10,10 +10,10 @@
       "@telegum/mini-apps-utils": ["./packages/utils/src/index.ts"],
       "@telegum/mini-apps-sdk": ["./packages/sdk/src/index.ts"]
     },
-    "resolveJsonModule": true,
+    "checkJs": true,
     "strict": true,
     "strictNullChecks": true,
-    "esModuleInterop": true,
+    "noEmit": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
