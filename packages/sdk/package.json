@@ -1,5 +1,6 @@
 {
   "name": "@telegum/mini-apps-sdk",
+  "type": "module",
   "version": "0.5.1",
   "description": "Custom Telegram Mini Apps SDK.",
   "author": "Vladislav Deryabkin",
