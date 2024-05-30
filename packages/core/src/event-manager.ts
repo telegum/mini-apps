@@ -30,6 +30,7 @@ declare global {
 }
 
 export type EventManagerOptions = {
+  debug?: boolean
   trustedTargetOrigin?: string
 }
 
@@ -47,6 +48,7 @@ export type EventManagerOptions = {
  * @see https://corefork.telegram.org/api/web-events
  */
 export class EventManager {
+  private debug: boolean
   private trustedTargetOrigin: string
   private communicationMethod: CommunicationMethod
   private eventListeners: Map<IncomingEvent['type'], ((data: any) => void)[]>
@@ -54,9 +56,11 @@ export class EventManager {
 
   constructor(options: EventManagerOptions = {}) {
     const {
+      debug = false,
       trustedTargetOrigin = '*',
     } = options
 
+    this.debug = debug
     this.trustedTargetOrigin = trustedTargetOrigin
     this.communicationMethod = detectCommunicationMethod()
     this.eventListeners = new Map()
@@ -76,8 +80,12 @@ export class EventManager {
   postEvent<T extends OutgoingEventWithoutData['type']>(eventType: T, eventData?: never): void
   postEvent(eventType: OutgoingEvent['type'], eventData?: unknown) {
     if (eventData === undefined) {
-      eventData = null
+      eventData = ''
     }
+
+    // eslint-disable-next-line no-console
+    console.log('[MiniApp] ->', eventType, eventData)
+
     switch (this.communicationMethod) {
       case 'window.TelegramWebviewProxy.postEvent':
         window
@@ -100,8 +108,8 @@ export class EventManager {
   }
 
   /**
-   * Registers a listener function that will be invoked each time the Telegram
-   * client will send an event to the Mini App.
+   * Registers a listener function that will be invoked each time the hosting
+   * Telegram client will send an event to the Mini App.
    *
    * @param eventType Event type to subscribe to.
    * @param listener Function to be called when a new event of a specified type
@@ -132,9 +140,9 @@ export class EventManager {
   }
 
   /**
-   * Invokes a custom method call to Telegram servers via the Telegram client.
-   * It automatically registers a listener to handle custom method result and
-   * returns a Promise instead.
+   * Invokes a custom method call to Telegram servers via the hosting Telegram
+   * client, automatically registering a one-time listener to handle custom
+   * method result and resolve the returned promise.
    *
    * @see https://corefork.telegram.org/api/web-events#web-app-invoke-custom-method
    * @param method Custom method type to invoke.
@@ -146,6 +154,7 @@ export class EventManager {
   invokeCustomMethod<T = unknown>(method: string, params: Json): Promise<T> {
     return new Promise((resolve, reject) => {
       const requestId = this.newCustomMethodRequestId()
+
       this.pendingCustomMethodRequests.set(
         requestId,
         ({ result, error }) => {
@@ -156,19 +165,17 @@ export class EventManager {
           }
         },
       )
+
       this.postEvent(
         'web_app_invoke_custom_method',
-        {
-          req_id: requestId,
-          method,
-          params,
-        },
+        { req_id: requestId, method, params },
       )
     })
   }
 
   private registerEventReceivers() {
-    // Different clients of different versions send events in different ways.
+    // Different hosting clients of different versions send events
+    // in different ways — need to setup different receivers.
 
     // (1)
     if (isIframe()) {
@@ -204,6 +211,9 @@ export class EventManager {
     eventType: T,
     eventData: Extract<IncomingEvent, { type: T }>['data'],
   ): void {
+    // eslint-disable-next-line no-console
+    console.log('[MiniApp] <-', eventType, eventData)
+
     if (eventType === 'custom_method_invoked') {
       this.onCustomMethodInvoked(eventData as Extract<IncomingEvent, { type: 'custom_method_invoked' }>['data'])
     }
@@ -213,7 +223,9 @@ export class EventManager {
       for (const listener of targetEventListeners) {
         try {
           listener(eventData)
-        } catch (e) {}
+        } catch (e) {
+          console.error(`Event listener for "${eventType}" thrown an error:`, e)
+        }
       }
     }
   }
