@@ -15,6 +15,8 @@ const {
   settingsButton,
   backButton,
   popup,
+  alert: miniAppAlert,
+  confirm: miniAppConfirm,
   requestWriteAccess,
   requestPhone,
 } = init()
@@ -64,36 +66,32 @@ updateSettingsButtonToggle()
 
 // Popup
 
-const showPopupConfirmButton = document.getElementById('show-popup-confirm') as HTMLButtonElement
-showPopupConfirmButton.addEventListener('click', () => {
-  popup
-    .show({
-      title: 'Short Title',
-      message: 'Some descriptive message for the popup with "ok" and "cancel" buttons.',
-      buttons: [
-        { id: 'ok', type: 'ok' },
-        { id: 'cancel', type: 'cancel' },
-      ],
-    })
-    .then(({ pressedButtonId }) => {
-      alert(`Pressed button ID: ${pressedButtonId}`)
-    })
+const showConfirmButton = document.getElementById('show-confirm') as HTMLButtonElement
+showConfirmButton.addEventListener('click', () => {
+  miniAppConfirm(
+    'Are you sure you want to join a navy?',
+  ).then((confirmed) => {
+    alert(`Confirmed: ${confirmed}`)
+  })
 })
 
-const showPopupActionButton = document.getElementById('show-popup-action') as HTMLButtonElement
-showPopupActionButton.addEventListener('click', () => {
-  popup
-    .show({
-      message: 'Fake popup without title but with buttons of 3 types: "default", "destructive" and "close".',
-      buttons: [
-        { id: 'send-money', type: 'default', text: 'Send Money' },
-        { id: 'delete-all', type: 'destructive', text: 'Delete All' },
-        { id: 'close', type: 'close' },
-      ],
-    })
-    .then(({ pressedButtonId }) => {
-      alert(`Pressed button ID: ${pressedButtonId}`)
-    })
+const showAlertButton = document.getElementById('show-alert') as HTMLButtonElement
+showAlertButton.addEventListener('click', () => {
+  miniAppAlert('You\'re becoming a pirate.')
+})
+
+const showPopupButton = document.getElementById('show-popup') as HTMLButtonElement
+showPopupButton.addEventListener('click', () => {
+  popup({
+    message: 'Fake popup without title but with buttons of 3 types: "default", "destructive" and "close".',
+    buttons: [
+      { id: 'send-money', type: 'default', text: 'Send Money' },
+      { id: 'delete-all', type: 'destructive', text: 'Delete All' },
+      { id: 'close', type: 'close' },
+    ],
+  }).then(({ pressedButtonId }) => {
+    alert(`Pressed button ID: ${pressedButtonId}`)
+  })
 })
 
 // Haptic Feedback
