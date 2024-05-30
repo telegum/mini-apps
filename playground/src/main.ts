@@ -9,6 +9,8 @@ const {
   ready,
   close,
   expand,
+  enableClosingConfirmation,
+  disableClosingConfirmation,
   theme,
   haptic,
   mainButton,
@@ -92,6 +94,25 @@ showPopupButton.addEventListener('click', () => {
   }).then(({ pressedButtonId }) => {
     alert(`Pressed button ID: ${pressedButtonId}`)
   })
+})
+
+// Closing Behavior
+
+const enableClosingConfirmationButton = document.getElementById('enable-closing-confirmation') as HTMLButtonElement
+const disableClosingConfirmationButton = document.getElementById('disable-closing-confirmation') as HTMLButtonElement
+
+disableClosingConfirmationButton.disabled = true
+
+enableClosingConfirmationButton.addEventListener('click', () => {
+  enableClosingConfirmationButton.disabled = true
+  disableClosingConfirmationButton.disabled = false
+  enableClosingConfirmation()
+})
+
+disableClosingConfirmationButton.addEventListener('click', () => {
+  disableClosingConfirmationButton.disabled = true
+  enableClosingConfirmationButton.disabled = false
+  disableClosingConfirmation()
 })
 
 // Haptic Feedback
