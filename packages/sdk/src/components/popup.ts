@@ -2,11 +2,33 @@ import type { WebAppOpenPopup } from '@telegum/mini-apps-core/types'
 import type { Context } from './_context'
 
 export type PopupFlavor = {
-  popup: Popup
+  popup: Popup['show']
+  alert: (message: string) => Promise<void>
+  confirm: (message: string) => Promise<boolean>
 }
 
 export function installPopup(ctx: Context<PopupFlavor>) {
-  ctx.miniApp.popup = new Popup(ctx)
+  const popup = new Popup(ctx)
+
+  ctx.miniApp.popup = popup.show.bind(popup)
+
+  ctx.miniApp.alert = async (message) => {
+    await popup.show({
+      message,
+      buttons: [{ type: 'close' }],
+    })
+  }
+
+  ctx.miniApp.confirm = async (message) => {
+    const { pressedButtonId } = await popup.show({
+      message,
+      buttons: [
+        { type: 'ok', id: 'ok' },
+        { type: 'cancel' },
+      ],
+    })
+    return pressedButtonId === 'ok'
+  }
 }
 
 export type PopupParams = {
