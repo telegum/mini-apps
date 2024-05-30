@@ -20,6 +20,8 @@ import type { SettingsButtonFlavor } from './components/settings-button'
 import { installSettingsButton } from './components/settings-button'
 import type { ThemingFlavor } from './components/theming'
 import { installTheming } from './components/theming'
+import type { ClosingBehaviorFlavor } from './components/closing-behavior'
+import { installClosingBehavior } from './components/closing-behavior'
 
 import { loadAndStoreLaunchParams } from './launch-params'
 import { sessionSyncKvStorage } from './utils/storage'
@@ -27,6 +29,7 @@ import { sessionSyncKvStorage } from './utils/storage'
 export type MiniApp =
   & BasicFunctionalityFlavor
   & ThemingFlavor
+  & ClosingBehaviorFlavor
   & MainButtonFlavor
   & BackButtonFlavor
   & SettingsButtonFlavor
@@ -52,6 +55,7 @@ export function init(): MiniApp {
 
   installBasicFunctionality(ctx)
   installTheming(ctx)
+  installClosingBehavior(ctx)
   installMainButton(ctx)
   installBackButton(ctx)
   installSettingsButton(ctx)
