@@ -34,7 +34,7 @@ class MainButton extends ClickableComponent {
 
     this.state = new State<MainButtonState>({
       storage: ctx.storage,
-      storageKey: 'MainButton',
+      key: 'MainButton',
       initial: () => ({
         text: 'CONTINUE',
         textColor: null,
@@ -43,38 +43,35 @@ class MainButton extends ClickableComponent {
         enabled: true,
         loading: false,
       }),
-    })
-
-    this.state.onBeforeChange = (newState) => {
-      if (newState.text != null) {
+      onBeforeChange: (newState) => {
         newState.text = newState.text.trim()
-      }
 
-      if (newState.text === '') {
-        throw new Error('Main Button text must not be empty')
-      }
+        if (!newState.text) {
+          throw new Error('Main Button text must not be empty')
+        }
 
-      if (newState.visible) {
-        this.ctx.eventManager.postEvent(
-          'web_app_setup_main_button',
-          {
-            is_visible: newState.visible,
-            is_active: newState.enabled,
-            is_progress_visible: newState.loading,
-            text: newState.text,
-            color: newState.bgColor ?? this.ctx.miniApp.theme.colors.buttonBg,
-            text_color: newState.textColor ?? this.ctx.miniApp.theme.colors.buttonText,
-          },
-        )
-      } else {
-        this.ctx.eventManager.postEvent(
-          'web_app_setup_main_button',
-          { is_visible: false },
-        )
-      }
+        if (newState.visible) {
+          this.ctx.eventManager.postEvent(
+            'web_app_setup_main_button',
+            {
+              is_visible: true,
+              is_active: newState.enabled,
+              is_progress_visible: newState.loading,
+              text: newState.text,
+              color: newState.bgColor ?? this.ctx.miniApp.theme.colors.buttonBg,
+              text_color: newState.textColor ?? this.ctx.miniApp.theme.colors.buttonText,
+            },
+          )
+        } else {
+          this.ctx.eventManager.postEvent(
+            'web_app_setup_main_button',
+            { is_visible: false },
+          )
+        }
 
-      return newState
-    }
+        return newState
+      },
+    })
   }
 
   public get text(): string {

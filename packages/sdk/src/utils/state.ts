@@ -7,16 +7,18 @@ export class State<T extends Record<string, Json>> {
   private storageKey: string
   private initial: (() => T)
   private cached?: T
-  public onBeforeChange?: (newState: T, oldState: T) => T | void
+  private onBeforeChange?: (newState: T, oldState: T) => T | void
 
   constructor(options: {
     storage: SyncKvStorage
-    storageKey: string
+    key: string
     initial: (() => T)
+    onBeforeChange?: (newState: T, oldState: T) => T | void
   }) {
     this.storage = options.storage
-    this.storageKey = `__MiniApp__State__${options.storageKey}`
+    this.storageKey = `__MiniApp__State__${options.key}`
     this.initial = options.initial
+    this.onBeforeChange = options.onBeforeChange
   }
 
   load(): T {

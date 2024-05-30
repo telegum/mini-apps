@@ -19,6 +19,7 @@ class SettingsButton extends ClickableComponent {
 
   constructor(private ctx: Context) {
     super()
+
     this.ctx.eventManager.onEvent('settings_button_pressed', () => {
       if (this.visible) {
         this.triggerOnClick()
@@ -27,16 +28,16 @@ class SettingsButton extends ClickableComponent {
 
     this.state = new State<SettingsButtonState>({
       storage: ctx.storage,
-      storageKey: 'SettingsButton',
+      key: 'SettingsButton',
       initial: () => ({
         visible: false,
       }),
+      onBeforeChange: (newState) => {
+        this.ctx.eventManager.postEvent('web_app_setup_settings_button', {
+          is_visible: newState.visible,
+        })
+      },
     })
-    this.state.onBeforeChange = (newState) => {
-      this.ctx.eventManager.postEvent('web_app_setup_settings_button', {
-        is_visible: newState.visible,
-      })
-    }
   }
 
   public get visible(): boolean {
