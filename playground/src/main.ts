@@ -9,17 +9,16 @@ const {
   ready,
   close,
   expand,
-  enableClosingConfirmation,
-  disableClosingConfirmation,
+  closingConfirmation,
   theme,
   haptic,
   mainButton,
   settingsButton,
   backButton,
   popup,
-  qrScanner,
   alert: miniAppAlert,
   confirm: miniAppConfirm,
+  qrScanner,
   requestWriteAccess,
   requestPhone,
 } = init()
@@ -129,19 +128,22 @@ scanQrManyButton.addEventListener('click', () => {
 const enableClosingConfirmationButton = document.getElementById('enable-closing-confirmation') as HTMLButtonElement
 const disableClosingConfirmationButton = document.getElementById('disable-closing-confirmation') as HTMLButtonElement
 
-disableClosingConfirmationButton.disabled = true
+function updateClosingConfirmationButtons() {
+  enableClosingConfirmationButton.disabled = closingConfirmation.enabled()
+  disableClosingConfirmationButton.disabled = !closingConfirmation.enabled()
+}
 
 enableClosingConfirmationButton.addEventListener('click', () => {
-  enableClosingConfirmationButton.disabled = true
-  disableClosingConfirmationButton.disabled = false
-  enableClosingConfirmation()
+  closingConfirmation.enable()
+  updateClosingConfirmationButtons()
 })
 
 disableClosingConfirmationButton.addEventListener('click', () => {
-  disableClosingConfirmationButton.disabled = true
-  enableClosingConfirmationButton.disabled = false
-  disableClosingConfirmation()
+  closingConfirmation.disable()
+  updateClosingConfirmationButtons()
 })
+
+updateClosingConfirmationButtons()
 
 // Haptic Feedback
 
