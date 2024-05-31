@@ -1,7 +1,7 @@
 {
   "name": "@telegum/mini-apps-utils",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Internal utility functions and types for Telegram Mini Apps SDK.",
   "author": "Vladislav Deryabkin",
   "license": "MIT",
