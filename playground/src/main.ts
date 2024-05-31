@@ -17,6 +17,7 @@ const {
   settingsButton,
   backButton,
   popup,
+  qrScanner,
   alert: miniAppAlert,
   confirm: miniAppConfirm,
   requestWriteAccess,
@@ -94,6 +95,33 @@ showPopupButton.addEventListener('click', () => {
   }).then(({ pressedButtonId }) => {
     alert(`Pressed button ID: ${pressedButtonId}`)
   })
+})
+
+// QR-Scanner
+
+const scanQrOnceButton = document.getElementById('scan-qr-once') as HTMLButtonElement
+const scanQrManyButton = document.getElementById('scan-qr-many') as HTMLButtonElement
+const scannedQrCodes = document.getElementById('scanned-qr-codes') as HTMLPreElement
+
+scanQrOnceButton.addEventListener('click', () => {
+  const unregister = qrScanner.onData((data) => {
+    unregister()
+    qrScanner.close()
+    alert(data)
+  })
+  qrScanner.open('Try to scan a QR 🔍')
+})
+
+scanQrManyButton.addEventListener('click', () => {
+  scannedQrCodes.textContent = ''
+  const unregisterData = qrScanner.onData((data) => {
+    scannedQrCodes.textContent += `${data}\n`
+  })
+  const unregisterClose = qrScanner.onClose(() => {
+    unregisterData()
+    unregisterClose()
+  })
+  qrScanner.open('Scanning until closed...')
 })
 
 // Closing Behavior
