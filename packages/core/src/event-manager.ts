@@ -83,8 +83,10 @@ export class EventManager {
       eventData = ''
     }
 
-    // eslint-disable-next-line no-console
-    console.log('[MiniApp] ->', eventType, eventData)
+    if (this.debug) {
+      // eslint-disable-next-line no-console
+      console.log('[MiniApp] ->', eventType, eventData)
+    }
 
     switch (this.communicationMethod) {
       case 'window.TelegramWebviewProxy.postEvent':
@@ -211,8 +213,10 @@ export class EventManager {
     eventType: T,
     eventData: Extract<IncomingEvent, { type: T }>['data'],
   ): void {
-    // eslint-disable-next-line no-console
-    console.log('[MiniApp] <-', eventType, eventData)
+    if (this.debug) {
+      // eslint-disable-next-line no-console
+      console.log('[MiniApp] <-', eventType, eventData)
+    }
 
     if (eventType === 'custom_method_invoked') {
       this.onCustomMethodInvoked(eventData as Extract<IncomingEvent, { type: 'custom_method_invoked' }>['data'])
