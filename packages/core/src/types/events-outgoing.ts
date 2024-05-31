@@ -25,6 +25,7 @@ export type OutgoingEvent =
   | WebAppSetupMainButton
   | WebAppSetupBackButton
   | WebAppSetupSettingsButton
+  | PaymentFormSubmit
   | IframeWillReload
   | IframeReady
 
@@ -292,6 +293,17 @@ export type WebAppSetupSettingsButton = {
 }
 
 /**
+ * https://corefork.telegram.org/api/web-events#payment-form-submit
+ */
+export type PaymentFormSubmit = {
+  type: 'payment_form_submit'
+  data: {
+    title: string
+    credentials: Json
+  }
+}
+
+/**
  * https://tg.dev/js/telegram-web-app.js
  */
 export type IframeWillReload = {
@@ -302,8 +314,3 @@ export type IframeReady = {
   type: 'iframe_ready'
   data: { reload_supported: boolean }
 }
-
-/**
- * @todo Check whether payment_form_submit, share_score, share_game, game_over,
- *       game_loaded and resize_frame are supported and useful in web apps.
- */
