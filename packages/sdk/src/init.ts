@@ -16,6 +16,8 @@ import type { PermissionsFlavor } from './components/permissions'
 import { installPermissions } from './components/permissions'
 import type { PopupFlavor } from './components/popup'
 import { installPopup } from './components/popup'
+import type { QrScannerFlavor } from './components/qr-scanner'
+import { installQrScanner } from './components/qr-scanner'
 import type { SettingsButtonFlavor } from './components/settings-button'
 import { installSettingsButton } from './components/settings-button'
 import type { ThemingFlavor } from './components/theming'
@@ -34,6 +36,7 @@ export type MiniApp =
   & BackButtonFlavor
   & SettingsButtonFlavor
   & PopupFlavor
+  & QrScannerFlavor
   & HapticFeedbackFlavor
   & PermissionsFlavor
   & CloudStorageFlavor
@@ -60,6 +63,7 @@ export function init(): MiniApp {
   installBackButton(ctx)
   installSettingsButton(ctx)
   installPopup(ctx)
+  installQrScanner(ctx)
   installHapticFeedback(ctx)
   installPermissions(ctx)
   installCloudStorage(ctx)
