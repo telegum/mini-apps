@@ -3,8 +3,8 @@ import type { ThemeParams } from './theme-params'
 
 export type IncomingEvent =
   | MainButtonPressed
-  | SettingsButtonPresses
   | BackButtonPresses
+  | SettingsButtonPresses
   | InvoiceClosed
   | ViewportChanged
   | ThemeChanged
@@ -27,18 +27,18 @@ export type MainButtonPressed = {
 }
 
 /**
- * https://core.telegram.org/api/bots/webapps#settings-button-pressed
- */
-export type SettingsButtonPresses = {
-  type: 'settings_button_pressed'
-  data: null
-}
-
-/**
  * https://corefork.telegram.org/api/bots/webapps#back-button-pressed
  */
 export type BackButtonPresses = {
   type: 'back_button_pressed'
+  data: null
+}
+
+/**
+ * https://core.telegram.org/api/bots/webapps#settings-button-pressed
+ */
+export type SettingsButtonPresses = {
+  type: 'settings_button_pressed'
   data: null
 }
 
@@ -110,7 +110,6 @@ export type PhoneRequested = {
  */
 export type CustomMethodInvoked = {
   type: 'custom_method_invoked'
-
   data:
     | { req_id: string, result: Json, error: undefined }
     | { req_id: string, result: undefined, error: string }
