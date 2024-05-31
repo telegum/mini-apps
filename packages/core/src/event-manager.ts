@@ -80,7 +80,7 @@ export class EventManager {
   postEvent<T extends OutgoingEventWithoutData['type']>(eventType: T, eventData?: never): void
   postEvent(eventType: OutgoingEvent['type'], eventData?: unknown) {
     if (eventData === undefined) {
-      eventData = ''
+      eventData = null
     }
 
     if (this.debug) {
